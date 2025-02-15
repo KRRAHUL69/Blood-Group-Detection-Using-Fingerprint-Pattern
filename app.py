@@ -8,7 +8,7 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array, save_im
 import ssl
 
 # Disable SSL verification for downloading pre-trained models, if needed
-ssl._create_default_https_context = _create_unverified_https_context
+ssl._create_default_https_context = ssl._create_unverified_context
 
 app = Flask(__name__)
 
