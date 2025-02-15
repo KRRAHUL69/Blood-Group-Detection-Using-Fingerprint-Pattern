@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css"> 
+    <title>Blood Group Detector</title>
+</head>
+<body>
+    <h1>Blood Group Detection Using Fingerprint</h1>
+
+    <div class="container">
+        <div class="form-action">
+            <h2>Your Details</h2>
+            <form id="bloodGroupForm">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" placeholder="Enter your Phone No." pattern="[0-9]{10}" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" required>
+                        <option value="" disabled selected>Select your Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <select id="age" required>
+                        <option value="" disabled selected>Select your Age</option>
+                        <script>
+                            for (let i = 1; i <= 100; i++) {
+                                document.write(`<option value="${i}">${i}</option>`);
+                            }
+                        </script>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fingerprint">Upload Fingerprint</label>
+                    <input type="file" id="fingerprint" accept="image/*" onchange="previewFingerprint()" required>
+                </div>
+
+                <div class="preview-container">
+                    <img id="fingerprintPreview" alt="Fingerprint-Preview">
+                </div>
+                <button type="button" onclick="submitDetails()">Detect Blood Group</button>
+            </form>
+        </div>
+
+        <div class="result-section" id="result-section" style="display: none;">
+            <h2>Detection Result</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody id="resultTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function previewFingerprint() {
+            const fileInput = document.getElementById('fingerprint');
+            const previewImage = document.getElementById('fingerprintPreview');
+
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    previewImage.src = reader.result;
+                    previewImage.style.display = 'block'; // Make the image visible
+                };
+            reader.readAsDataURL(file); // Pass the file object to readAsDataURL
+            }
+        }
+
+        function submitDetails() {
+            const name = document.getElementById('name').value;
+            const mobile = document.getElementById('mobile').value;
+            const gender = document.getElementById('gender').value;
+            const age = document.getElementById('age').value;
+            const fingerprintInput = document.getElementById('fingerprint');
+            const fingerprintFile = fingerprintInput.files[0];
+
+            // Check if any required field is empty
+            if (!name || !mobile || !gender || !age || !fingerprintFile) {
+                alert("Please fill in all fields.");
+                return; 
+            }
+
+            const formData = new FormData();
+
+            formData.append('file', fingerprintFile);
+            formData.append('name', name); 
+            formData.append('mobile', mobile);
+            formData.append('gender', gender);
+            formData.append('age', age);
+
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultSection = document.getElementById('resultSection');
+                const resultTableBody = document.getElementById('resultTableBody');
+
+                resultTableBody.innerHTML = `
+                    <tr><td>Name</td><td>${data.name}</td></tr>
+                    <tr><td>Mobile</td><td>${data.mobile}</td></tr>
+                    <tr><td>Gender</td><td>${data.gender}</td></tr>
+                    <tr><td>Age</td><td>${data.age}</td></tr>
+                    <tr><td>Fingerprint</td><td><img src="${document.getElementById('fingerprintPreview').src}" style="max-width: 100px; max-height: 100px;"></td></tr>
+                    <tr><td>Confidence</td><td>${data.confidence}</td></tr>
+                    <tr><td>Blood Group</td><td>${data.predicted_label}</td></tr>
+                `;
+
+                resultSection.style.display = "block";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            });
+        }
+    </script>
+</body>
+</html>
