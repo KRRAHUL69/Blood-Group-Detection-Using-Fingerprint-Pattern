@@ -13,7 +13,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 app = Flask(__name__)
 
 # Load the pre-trained model
-model = tf.keras.models.load_model("./model/model.h5")
+model = tf.keras.models.load_model("./notebook/model.keras")
 
 # Define the allowed extensions for uploaded files
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'bmp'}
@@ -90,7 +90,7 @@ def predict():
             if os.path.exists(file_path):
                 os.remove(file_path)
 
-    if __name__ == '__main__':
-        if not os.path.exists('uploads'):
-            os.makedirs('uploads')
-        app.run(debug=True)
+if __name__ == '__main__':
+    if not os.path.exists('uploads'):
+        os.makedirs('uploads')
+    app.run(debug=True)
