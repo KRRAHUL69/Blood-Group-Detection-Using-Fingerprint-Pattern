@@ -1,11 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css"> 
+    <!-- <link rel="stylesheet" href="style.css"> -->
     <title>Blood Group Detector</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form Styles */
+        .form-action {
+            margin-bottom: 20px;
+        }
+
+        .form-action h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Preview Container */
+        .preview-container {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .preview-container img {
+            max-width: 200px;
+            max-height: 200px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Result Section */
+        .result-section {
+            margin-top: 20px;
+        }
+
+        .result-section h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .result-section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .result-section th,
+        .result-section td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+    </style>
 </head>
+
 <body>
     <h1>Blood Group Detection Using Fingerprint</h1>
 
@@ -82,7 +192,7 @@
                     previewImage.src = reader.result;
                     previewImage.style.display = 'block'; // Make the image visible
                 };
-            reader.readAsDataURL(file); // Pass the file object to readAsDataURL
+                reader.readAsDataURL(file); // Pass the file object to readAsDataURL
             }
         }
 
@@ -97,13 +207,13 @@
             // Check if any required field is empty
             if (!name || !mobile || !gender || !age || !fingerprintFile) {
                 alert("Please fill in all fields.");
-                return; 
+                return;
             }
 
             const formData = new FormData();
 
             formData.append('file', fingerprintFile);
-            formData.append('name', name); 
+            formData.append('name', name);
             formData.append('mobile', mobile);
             formData.append('gender', gender);
             formData.append('age', age);
@@ -113,12 +223,12 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                const resultSection = document.getElementById('resultSection');
-                const resultTableBody = document.getElementById('resultTableBody');
+                .then(response => response.json())
+                .then(data => {
+                    const resultSection = document.getElementById('resultSection');
+                    const resultTableBody = document.getElementById('resultTableBody');
 
-                resultTableBody.innerHTML = `
+                    resultTableBody.innerHTML = `
                     <tr><td>Name</td><td>${data.name}</td></tr>
                     <tr><td>Mobile</td><td>${data.mobile}</td></tr>
                     <tr><td>Gender</td><td>${data.gender}</td></tr>
@@ -128,13 +238,14 @@
                     <tr><td>Blood Group</td><td>${data.predicted_label}</td></tr>
                 `;
 
-                resultSection.style.display = "block";
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("An error occurred. Please try again.");
-            });
+                    resultSection.style.display = "block";
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred. Please try again.");
+                });
         }
     </script>
 </body>
+
 </html>
