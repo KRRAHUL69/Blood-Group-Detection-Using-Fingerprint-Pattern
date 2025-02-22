@@ -46,10 +46,9 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     if request.method == 'POST':
-        if 'file' not in request.files:
+        file = next(iter(request.files.values()), None)
+        if not file:
             return jsonify({'error': 'No file provided'}), 400
-
-        file = request.files['file']
 
         if file.filename == '':
             return jsonify({'error': 'No file selected'}), 400
@@ -68,18 +67,18 @@ def predict():
 
             # Perform prediction
             prediction = model.predict(img)
-            predicted_class = int(np.argmax(predictions[0]))
+            predicted_class = int(np.argmax(prediction[0]))
             print('predicted_class is : ', predicted_class)
 
             # Optimal: Define class names (if not in the model)
-            class_names = ['A+', 'A-', 'B+', 'B-', 'AB+' 'AB-', 'O+', 'O-'] # Example Classes
+            class_names = ['A+', 'A-', 'B+', 'B-', 'AB+' 'AB-', 'O+', 'O-']
             predicted_label= class_names[predicted_class]
 
             # Return the result as JSON
             return jsonify({
                 'prediction_class': predicted_class,
                 'predicted_label': predicted_label,
-                'confidence': float(np.max(predictions[0]))
+                'confidence': float(np.max(prediction[0]))
             })
 
         except Exception as e:

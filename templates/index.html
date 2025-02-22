@@ -183,9 +183,9 @@
         function previewFingerprint() {
             const fileInput = document.getElementById('fingerprint');
             const previewImage = document.getElementById('fingerprintPreview');
-
+    
             const file = fileInput.files[0];
-
+    
             if (file) {
                 const reader = new FileReader();
                 reader.onload = () => {
@@ -195,49 +195,47 @@
                 reader.readAsDataURL(file); // Pass the file object to readAsDataURL
             }
         }
-
+    
         function submitDetails() {
             const name = document.getElementById('name').value;
-            const mobile = document.getElementById('mobile').value;
+            const phone = document.getElementById('phone').value; // Fixed this to 'phone'
             const gender = document.getElementById('gender').value;
             const age = document.getElementById('age').value;
             const fingerprintInput = document.getElementById('fingerprint');
             const fingerprintFile = fingerprintInput.files[0];
-
+    
             // Check if any required field is empty
-            if (!name || !mobile || !gender || !age || !fingerprintFile) {
+            if (!name || !phone || !gender || !age || !fingerprintFile) {
                 alert("Please fill in all fields.");
                 return;
             }
-
+    
             const formData = new FormData();
-
             formData.append('file', fingerprintFile);
             formData.append('name', name);
-            formData.append('mobile', mobile);
+            formData.append('phone', phone); // Updated this to 'phone'
             formData.append('gender', gender);
             formData.append('age', age);
-
-
+    
             fetch('/predict', {
                 method: 'POST',
                 body: formData
             })
                 .then(response => response.json())
                 .then(data => {
-                    const resultSection = document.getElementById('resultSection');
+                    const resultSection = document.getElementById('result-section'); // Fixed this to 'result-section'
                     const resultTableBody = document.getElementById('resultTableBody');
-
+    
                     resultTableBody.innerHTML = `
-                    <tr><td>Name</td><td>${data.name}</td></tr>
-                    <tr><td>Mobile</td><td>${data.mobile}</td></tr>
-                    <tr><td>Gender</td><td>${data.gender}</td></tr>
-                    <tr><td>Age</td><td>${data.age}</td></tr>
-                    <tr><td>Fingerprint</td><td><img src="${document.getElementById('fingerprintPreview').src}" style="max-width: 100px; max-height: 100px;"></td></tr>
-                    <tr><td>Confidence</td><td>${data.confidence}</td></tr>
-                    <tr><td>Blood Group</td><td>${data.predicted_label}</td></tr>
-                `;
-
+                        <tr><td>Name</td><td>${data.name}</td></tr>
+                        <tr><td>Phone</td><td>${data.phone}</td></tr>
+                        <tr><td>Gender</td><td>${data.gender}</td></tr>
+                        <tr><td>Age</td><td>${data.age}</td></tr>
+                        <tr><td>Fingerprint</td><td><img src="${document.getElementById('fingerprintPreview').src}" style="max-width: 100px; max-height: 100px;"></td></tr>
+                        <tr><td>Confidence</td><td>${data.confidence}</td></tr>
+                        <tr><td>Blood Group</td><td>${data.predicted_label}</td></tr>
+                    `;
+    
                     resultSection.style.display = "block";
                 })
                 .catch(error => {
@@ -246,6 +244,7 @@
                 });
         }
     </script>
+    
 </body>
 
 </html>
