@@ -76,6 +76,10 @@ def predict():
 
             # Return the result as JSON
             return jsonify({
+                'name': request.form.get('name', 'undefined'),
+                'phone': request.form.get('phone', 'undefined'),
+                'gender': request.form.get('gender', 'undefined'),
+                'age': request.form.get('age', 'undefined'),
                 'prediction_class': predicted_class,
                 'predicted_label': predicted_label,
                 'confidence': float(np.max(prediction[0]))
