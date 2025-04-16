@@ -4,7 +4,7 @@ import tensorflow as tf
 import cv2
 import os
 from werkzeug.utils import secure_filename
-from tensorflow.keras.preprocessing.image import load_img, img_to_array, save_img
+from tensorflow.keras.preprocessing.image import load_img, img_to_array, save_img # type: ignore
 import ssl
 
 # Disable SSL verification for downloading pre-trained models, if needed
@@ -13,7 +13,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 app = Flask(__name__)
 
 # Load the pre-trained model
-model = tf.keras.models.load_model("./notebook/model.keras")
+model = tf.keras.models.load_model("resnet_model.keras")
 
 # Define the allowed extensions for uploaded files
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'bmp'}
@@ -33,7 +33,7 @@ def preprocess_image(file_path):
         np.ndarray: Preprocessed image ready for predicion.
     """
 
-    img = load_img(file_path, target_size=(64, 64))  # Resize image match the model's input size
+    img = load_img(file_path, target_size=(32, 32))  # Resize image match the model's input size
     img_array = img_to_array(img) # Convert image to array
     img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
     return img_array
@@ -43,7 +43,7 @@ def home():
     return render_template('index.html')
 
 # Endpoint to predict the blood group from fingerprint image
-@app.route('/predict', methods=['POST'])
+@app.route('/BGpredict', methods=['POST'])
 def predict():
     if request.method == 'POST':
         file = next(iter(request.files.values()), None)
@@ -70,7 +70,6 @@ def predict():
             predicted_class = int(np.argmax(prediction[0]))
             print('predicted_class is : ', predicted_class)
 
-            # Optimal: Define class names (if not in the model)
             class_names = ['A+', 'A-', 'B+', 'B-', 'AB+' 'AB-', 'O+', 'O-']
             predicted_label= class_names[predicted_class]
 
